@@ -13,7 +13,12 @@ namespace ToDoApp
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<TodoContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ToDoAPi")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ToDoAPi"))); using (var scope = builder.Services.BuildServiceProvider())
+            {
+                var dbContext = scope.GetRequiredService<TodoContext>();
+                dbContext.Database.EnsureCreated();
+            }
+
 
             builder.Services.AddCors(options =>
             {
