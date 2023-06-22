@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoApp.Models;
 
@@ -51,7 +46,7 @@ namespace ToDoApp.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(todo).State = EntityState.Modified;
+            _context.Entry(entity: todo).State = EntityState.Modified;
 
             try
             {
