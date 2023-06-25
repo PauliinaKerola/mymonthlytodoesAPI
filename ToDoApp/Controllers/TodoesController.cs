@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ToDoApp.Models;
 
 namespace ToDoApp.Controllers
@@ -22,6 +23,15 @@ namespace ToDoApp.Controllers
             return await _context.Todos.ToListAsync();
         }
 
+        [HttpGet("searchByTerm/{term}")]
+        public async Task<ActionResult<List<Todo>>> GetTodoTerm(string term)
+        {
+            return await _context.Todos
+                .Where(t => t.Title.Contains(term))
+                .ToListAsync();
+        }
+
+
         // GET: api/Todoes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Todo>> GetTodo(int id)
@@ -36,8 +46,8 @@ namespace ToDoApp.Controllers
             return todo;
         }
 
+
         // PUT: api/Todoes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTodo(int id, Todo todo)
         {
@@ -68,7 +78,6 @@ namespace ToDoApp.Controllers
         }
 
         // POST: api/Todoes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Todo>> PostTodo(Todo todo)
         {
@@ -77,6 +86,7 @@ namespace ToDoApp.Controllers
 
             return CreatedAtAction("GetTodo", new { id = todo.Id }, todo);
         }
+
 
         // DELETE: api/Todoes/5
         [HttpDelete("{id}")]
@@ -92,6 +102,18 @@ namespace ToDoApp.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Todo>>> GetTodos([FromQuery] int page = 1)
+        {
+            int pageSize = 5;
+            var todos = await _context.Todos
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return todos;
         }
 
         private bool TodoExists(int id)
